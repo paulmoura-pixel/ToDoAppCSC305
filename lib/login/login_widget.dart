@@ -101,7 +101,7 @@ class _LoginWidgetState extends State<LoginWidget>
                     child: Image.asset(
                       'assets/images/websiteBACKGROUND.png',
                       width: 481.4,
-                      height: 96.8,
+                      height: 122.8,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -995,6 +995,9 @@ class _LoginWidgetState extends State<LoginWidget>
                       if (_model.tabBarCurrentIndex == 1)
                         FFButtonWidget(
                           onPressed: () async {
+                            context.pushNamedAuth(
+                                TasksWidget.routeName, context.mounted);
+
                             GoRouter.of(context).prepareAuthEvent();
 
                             final user = await authManager.signInWithEmail(
@@ -1005,9 +1008,6 @@ class _LoginWidgetState extends State<LoginWidget>
                             if (user == null) {
                               return;
                             }
-
-                            context.pushNamedAuth(
-                                TasksWidget.routeName, context.mounted);
                           },
                           text: 'Log In',
                           options: FFButtonOptions(
