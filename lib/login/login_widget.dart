@@ -101,7 +101,7 @@ class _LoginWidgetState extends State<LoginWidget>
                     child: Image.asset(
                       'assets/images/websiteBACKGROUND.png',
                       width: 481.4,
-                      height: 96.8,
+                      height: 122.8,
                       fit: BoxFit.cover,
                     ),
                   ),
