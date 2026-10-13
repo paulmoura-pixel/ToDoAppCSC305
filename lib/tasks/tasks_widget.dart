@@ -1,4 +1,5 @@
 import '/auth/firebase_auth/auth_util.dart';
+import '/backend/api_requests/api_calls.dart';
 import '/backend/backend.dart';
 import '/components/add_task_widget.dart';
 import '/components/task_widget.dart';
@@ -44,186 +45,269 @@ class _TasksWidgetState extends State<TasksWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-        FocusManager.instance.primaryFocus?.unfocus();
-      },
-      child: Scaffold(
-        key: scaffoldKey,
-        backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            print('FloatingActionButton pressed ...');
-          },
-          backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
-          elevation: 0.0,
-          child: Container(
-            width: double.infinity,
-            height: double.infinity,
-            decoration: BoxDecoration(
-              color: FlutterFlowTheme.of(context).secondary,
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: FlutterFlowTheme.of(context).primaryText,
-                width: 1.0,
-              ),
-            ),
-            child: InkWell(
-              splashColor: Colors.transparent,
-              focusColor: Colors.transparent,
-              hoverColor: Colors.transparent,
-              highlightColor: Colors.transparent,
-              onTap: () async {
-                await showModalBottomSheet(
-                  isScrollControlled: true,
-                  backgroundColor: Colors.transparent,
-                  context: context,
-                  builder: (context) {
-                    return GestureDetector(
-                      onTap: () {
-                        FocusScope.of(context).unfocus();
-                        FocusManager.instance.primaryFocus?.unfocus();
-                      },
-                      child: Padding(
-                        padding: MediaQuery.viewInsetsOf(context),
-                        child: AddTaskWidget(),
-                      ),
-                    );
-                  },
-                ).then((value) => safeSetState(() {}));
-              },
-              child: Icon(
-                Icons.add_rounded,
-                color: FlutterFlowTheme.of(context).primaryText,
-                size: 30.0,
-              ),
-            ),
-          ),
-        ),
-        body: SafeArea(
-          top: true,
-          child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 24.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: (FFCrossAxisAlignment.start).flutterValue,
-              textBaseline: TextBaseline.alphabetic,
-              children: [
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 24.0),
-                  child: Text(
-                    'Tasks',
-                    style: FlutterFlowTheme.of(context).headlineMedium.override(
-                          font: GoogleFonts.inter(
-                            fontWeight: FlutterFlowTheme.of(context)
-                                .headlineMedium
-                                .fontWeight,
-                            fontStyle: FlutterFlowTheme.of(context)
-                                .headlineMedium
-                                .fontStyle,
-                          ),
-                          letterSpacing: 0.0,
-                          fontWeight: FlutterFlowTheme.of(context)
-                              .headlineMedium
-                              .fontWeight,
-                          fontStyle: FlutterFlowTheme.of(context)
-                              .headlineMedium
-                              .fontStyle,
-                        ),
+    return FutureBuilder<ApiCallResponse>(
+      future: ZenQuotesCall.call(),
+      builder: (context, snapshot) {
+        // Customize what your widget looks like when it's loading.
+        if (!snapshot.hasData) {
+          return Scaffold(
+            backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+            body: Center(
+              child: SizedBox(
+                width: 50.0,
+                height: 50.0,
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    FlutterFlowTheme.of(context).primary,
                   ),
                 ),
-                Expanded(
-                  child: StreamBuilder<List<TasksRecord>>(
-                    stream: queryTasksRecord(
-                      queryBuilder: (tasksRecord) => tasksRecord
-                          .where(
-                            'users',
-                            isEqualTo: currentUserReference,
-                          )
-                          .where(
-                            'completed',
-                            isEqualTo: false,
-                          ),
-                    ),
-                    builder: (context, snapshot) {
-                      // Customize what your widget looks like when it's loading.
-                      if (!snapshot.hasData) {
-                        return Center(
-                          child: SizedBox(
-                            width: 50.0,
-                            height: 50.0,
-                            child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                FlutterFlowTheme.of(context).primary,
-                              ),
-                            ),
+              ),
+            ),
+          );
+        }
+        final tasksZenQuotesResponse = snapshot.data!;
+
+        return GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
+          child: Scaffold(
+            key: scaffoldKey,
+            backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                print('FloatingActionButton pressed ...');
+              },
+              backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+              elevation: 0.0,
+              child: Container(
+                width: double.infinity,
+                height: double.infinity,
+                decoration: BoxDecoration(
+                  color: FlutterFlowTheme.of(context).secondary,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: FlutterFlowTheme.of(context).primaryText,
+                    width: 1.0,
+                  ),
+                ),
+                child: InkWell(
+                  splashColor: Colors.transparent,
+                  focusColor: Colors.transparent,
+                  hoverColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onTap: () async {
+                    await showModalBottomSheet(
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      context: context,
+                      builder: (context) {
+                        return GestureDetector(
+                          onTap: () {
+                            FocusScope.of(context).unfocus();
+                            FocusManager.instance.primaryFocus?.unfocus();
+                          },
+                          child: Padding(
+                            padding: MediaQuery.viewInsetsOf(context),
+                            child: AddTaskWidget(),
                           ),
                         );
-                      }
-                      List<TasksRecord> listViewTasksRecordList =
-                          snapshot.data!;
-
-                      return ListView.builder(
-                        padding: EdgeInsets.zero,
-                        scrollDirection: Axis.vertical,
-                        itemCount: listViewTasksRecordList.length,
-                        itemBuilder: (context, listViewIndex) {
-                          final listViewTasksRecord =
-                              listViewTasksRecordList[listViewIndex];
-                          return InkWell(
-                            splashColor: Colors.transparent,
-                            focusColor: Colors.transparent,
-                            hoverColor: Colors.transparent,
-                            highlightColor: Colors.transparent,
-                            onTap: () async {
-                              context.pushNamed(
-                                DetailsWidget.routeName,
-                                queryParameters: {
-                                  'taskDocument': serializeParam(
-                                    listViewTasksRecord,
-                                    ParamType.Document,
-                                  ),
-                                }.withoutNulls,
-                                extra: <String, dynamic>{
-                                  'taskDocument': listViewTasksRecord,
-                                },
-                              );
-                            },
-                            child: wrapWithModel(
-                              model: _model.taskModels.getModel(
-                                listViewTasksRecord.title,
-                                listViewIndex,
-                              ),
-                              updateCallback: () => safeSetState(() {}),
-                              child: TaskWidget(
-                                key: Key(
-                                  'Keyhxi_${listViewTasksRecord.title}',
-                                ),
-                                taskTest: valueOrDefault<String>(
-                                  listViewTasksRecord.title,
-                                  'title',
-                                ),
-                                completed: listViewTasksRecord.completed,
-                                checkAction: () async {
-                                  await listViewTasksRecord.reference
-                                      .update(createTasksRecordData(
-                                    completed: true,
-                                  ));
-                                },
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
+                      },
+                    ).then((value) => safeSetState(() {}));
+                  },
+                  child: Icon(
+                    Icons.add_rounded,
+                    color: FlutterFlowTheme.of(context).primaryText,
+                    size: 30.0,
                   ),
                 ),
-              ].divide(SizedBox(height: 12.0)),
+              ),
+            ),
+            body: SafeArea(
+              top: true,
+              child: Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 24.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: (FFCrossAxisAlignment.start).flutterValue,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    Padding(
+                      padding:
+                          EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 24.0),
+                      child: Text(
+                        'Tasks',
+                        style: FlutterFlowTheme.of(context)
+                            .headlineMedium
+                            .override(
+                              font: GoogleFonts.inter(
+                                fontWeight: FlutterFlowTheme.of(context)
+                                    .headlineMedium
+                                    .fontWeight,
+                                fontStyle: FlutterFlowTheme.of(context)
+                                    .headlineMedium
+                                    .fontStyle,
+                              ),
+                              letterSpacing: 0.0,
+                              fontWeight: FlutterFlowTheme.of(context)
+                                  .headlineMedium
+                                  .fontWeight,
+                              fontStyle: FlutterFlowTheme.of(context)
+                                  .headlineMedium
+                                  .fontStyle,
+                            ),
+                      ),
+                    ),
+                    Expanded(
+                      child: StreamBuilder<List<TasksRecord>>(
+                        stream: queryTasksRecord(
+                          queryBuilder: (tasksRecord) => tasksRecord
+                              .where(
+                                'users',
+                                isEqualTo: currentUserReference,
+                              )
+                              .where(
+                                'completed',
+                                isEqualTo: false,
+                              ),
+                        ),
+                        builder: (context, snapshot) {
+                          // Customize what your widget looks like when it's loading.
+                          if (!snapshot.hasData) {
+                            return Center(
+                              child: SizedBox(
+                                width: 50.0,
+                                height: 50.0,
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    FlutterFlowTheme.of(context).primary,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                          List<TasksRecord> listViewTasksRecordList =
+                              snapshot.data!;
+
+                          return ListView.builder(
+                            padding: EdgeInsets.zero,
+                            scrollDirection: Axis.vertical,
+                            itemCount: listViewTasksRecordList.length,
+                            itemBuilder: (context, listViewIndex) {
+                              final listViewTasksRecord =
+                                  listViewTasksRecordList[listViewIndex];
+                              return InkWell(
+                                splashColor: Colors.transparent,
+                                focusColor: Colors.transparent,
+                                hoverColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                onTap: () async {
+                                  context.pushNamed(
+                                    DetailsWidget.routeName,
+                                    queryParameters: {
+                                      'taskDocument': serializeParam(
+                                        listViewTasksRecord,
+                                        ParamType.Document,
+                                      ),
+                                    }.withoutNulls,
+                                    extra: <String, dynamic>{
+                                      'taskDocument': listViewTasksRecord,
+                                    },
+                                  );
+                                },
+                                child: wrapWithModel(
+                                  model: _model.taskModels.getModel(
+                                    listViewTasksRecord.title,
+                                    listViewIndex,
+                                  ),
+                                  updateCallback: () => safeSetState(() {}),
+                                  child: TaskWidget(
+                                    key: Key(
+                                      'Keyhxi_${listViewTasksRecord.title}',
+                                    ),
+                                    taskTest: valueOrDefault<String>(
+                                      listViewTasksRecord.title,
+                                      'title',
+                                    ),
+                                    completed: listViewTasksRecord.completed,
+                                    checkAction: () async {
+                                      await listViewTasksRecord.reference
+                                          .update(createTasksRecordData(
+                                        completed: true,
+                                      ));
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                    Align(
+                      alignment: AlignmentDirectional(-1.0, -1.0),
+                      child: Text(
+                        valueOrDefault<String>(
+                          ZenQuotesCall.quote(
+                            tasksZenQuotesResponse.jsonBody,
+                          ),
+                          'Quote',
+                        ),
+                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                              font: GoogleFonts.inter(
+                                fontWeight: FlutterFlowTheme.of(context)
+                                    .bodyMedium
+                                    .fontWeight,
+                                fontStyle: FlutterFlowTheme.of(context)
+                                    .bodyMedium
+                                    .fontStyle,
+                              ),
+                              letterSpacing: 0.0,
+                              fontWeight: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .fontWeight,
+                              fontStyle: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .fontStyle,
+                            ),
+                      ),
+                    ),
+                    Align(
+                      alignment: AlignmentDirectional(-1.0, -1.0),
+                      child: Text(
+                        valueOrDefault<String>(
+                          ZenQuotesCall.author(
+                            tasksZenQuotesResponse.jsonBody,
+                          ),
+                          'Author',
+                        ),
+                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                              font: GoogleFonts.inter(
+                                fontWeight: FlutterFlowTheme.of(context)
+                                    .bodyMedium
+                                    .fontWeight,
+                                fontStyle: FlutterFlowTheme.of(context)
+                                    .bodyMedium
+                                    .fontStyle,
+                              ),
+                              letterSpacing: 0.0,
+                              fontWeight: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .fontWeight,
+                              fontStyle: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .fontStyle,
+                            ),
+                      ),
+                    ),
+                  ].divide(SizedBox(height: 12.0)),
+                ),
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
